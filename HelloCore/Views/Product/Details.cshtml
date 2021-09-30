@@ -1,0 +1,13 @@
+﻿@model HelloCore.ViewModels.ProductDetailViewModel
+
+<h1>@Model.Naam</h1>
+
+<p>
+    Prijs: @Model.Prijs
+    <br />
+    Merk: @Model.Merk
+    <br />
+    Beschrijving: @Model.Beschrijving
+</p>
+
+@Html.ActionLink("Terug", "Index", "Product");
