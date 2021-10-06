@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace HelloCore.ViewModels
 {
-    public class CreateKlantViewModel
+    public class EditKlantViewModel
     {
+        public int KlantId { get; set; }
         public string Naam { get; set; }
         public string Voornaam { get; set; }
 

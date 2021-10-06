@@ -1,14 +1,51 @@
-﻿@model List<HelloCore.Models.Klant>
+﻿@model HelloCore.ViewModels.KlantListViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Klanten</h2>
-<ul>
-    @foreach (var klant in Model)
-    {
-        <li>@Html.DisplayFor(modelItem => @klant.Voornaam)
-            @Html.DisplayFor(test => @klant.Naam)
-            @Html.DisplayFor(test2 => @klant.AangemaaktDatum)</li>
-    }
-</ul>
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create new</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(v => v.Klanten[0].Naam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(v => v.Klanten[0].Voornaam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(v => v.Klanten[0].AangemaaktDatum)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var klant in Model.Klanten)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => @klant.Naam)
+                </td>
+                <td>
+                    @Html.DisplayFor(test => @klant.Voornaam)
+                </td>
+                <td>
+                    @Html.DisplayFor(test2 => @klant.AangemaaktDatum)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@klant.KlantId">Edit</a>
+                    </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@klant.KlantId">Details</a>
+                    </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@klant.KlantId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
