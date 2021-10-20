@@ -43,9 +43,12 @@
                 <td class="col-md-4">
                     Edit
                 </td>
-                <td class="col-md-4">
-                    Delete
-                </td>
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    <td class="col-md-4">
+                        Delete
+                    </td>
+                }
             </tr>
         }
     </tbody>

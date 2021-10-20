@@ -38,13 +38,16 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@klant.KlantId">Edit</a>
-                    </td>
+                </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@klant.KlantId">Details</a>
-                    </td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@klant.KlantId">Delete</a>
                 </td>
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@klant.KlantId">Delete</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

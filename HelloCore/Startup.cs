@@ -1,7 +1,9 @@
+using HelloCore.Areas.Identity.Data;
 using HelloCore.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,10 +30,13 @@ namespace HelloCore
             services.AddControllersWithViews();
             services.AddDbContext<HelloCoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("LocalDBConnection")));
+            services.AddDefaultIdentity<CustomUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<HelloCoreContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -48,6 +53,7 @@ namespace HelloCore
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -55,7 +61,48 @@ namespace HelloCore
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
+            //CreateRoles(serviceProvider).Wait();
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<CustomUser>>();
+            HelloCoreContext context = serviceProvider.GetRequiredService<HelloCoreContext>();
+
+            string[] roleNames = { "Admin", "Manager", "Member" };
+
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    //Create the roles and seed them into the database
+                    roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            //Assign admin to main user
+            CustomUser user = context.Users.FirstOrDefault(u => u.Email == "r0849413@student.thomasmore.be");
+
+            if (user != null)
+            {
+                DbSet<IdentityUserRole<String>> roles = context.UserRoles;
+                IdentityRole adminRole = context.Roles.FirstOrDefault(r => r.Name == "Admin");
+
+                if (adminRole != null)
+                {
+                    if (!roles.Any(ur => ur.UserId == user.Id && ur.RoleId == adminRole.Id))
+                    {
+                        roles.Add(new IdentityUserRole<String>() { UserId = user.Id, RoleId = adminRole.Id });
+                        context.SaveChanges();
+                    }
+                }
+            }
         }
     }
 }

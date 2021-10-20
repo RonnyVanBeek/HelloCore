@@ -1,5 +1,6 @@
 ﻿using HelloCore.Models;
 using HelloCore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace HelloCore.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         public List<Product> producten;
@@ -20,6 +22,7 @@ namespace HelloCore.Controllers
             producten.Add(new Product() { Naam = "koersfiets", ProductId = 3, Prijs = 1000, Merk = "Dynafit", Beschrijving = "Dit is een koersfiets van Dynafit." });
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             ProductlistViewModel viewModel = new ProductlistViewModel();
@@ -41,6 +44,7 @@ namespace HelloCore.Controllers
             return View("Index", viewModel);
         }
 
+        [Authorize]
         public IActionResult Details(int id)
         {
             Product product = producten.Where(prod => prod.ProductId == id).FirstOrDefault();

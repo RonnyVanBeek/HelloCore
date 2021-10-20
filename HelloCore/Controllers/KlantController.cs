@@ -1,6 +1,7 @@
 ﻿using HelloCore.Data;
 using HelloCore.Models;
 using HelloCore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace HelloCore.Controllers
 {
+    [Authorize]
     public class KlantController : Controller
     {
         private readonly HelloCoreContext _context;
@@ -19,6 +21,7 @@ namespace HelloCore.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             KlantListViewModel viewModel = new KlantListViewModel();
@@ -26,6 +29,7 @@ namespace HelloCore.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -133,6 +137,7 @@ namespace HelloCore.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
